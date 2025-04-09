@@ -1,4 +1,4 @@
-from auth.google import google
+from auth import auth
 
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import *
@@ -20,4 +20,4 @@ async def base():
     return 'test create'
 
 
-app.include_router(google)
+app.include_router(auth)
