@@ -1,6 +1,7 @@
+from auth.google import google
+
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import *
-import uvicorn
 
 app = FastAPI(title='test', docs_url=None)
 
@@ -17,3 +18,6 @@ app.add_middleware(
 @app.get('/')
 async def base():
     return 'test create'
+
+
+app.include_router(google)
