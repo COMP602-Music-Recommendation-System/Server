@@ -1,7 +1,7 @@
 import os
 
 from fastapi.responses import RedirectResponse
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 from httpx import post, get
 
 google = APIRouter(
@@ -35,8 +35,12 @@ async def auth_google(code: str):
         'redirect_uri': GOOGLE_REDIRECT_URI,
         'grant_type': 'authorization_code',
     })
+    access_token = response.json().get('access_token')
+    if not access_token:
+        raise HTTPException(detail='Failed to retrieve access token', status_code=400)
+
     user_info = get(
         'https://www.googleapis.com/oauth2/v1/userinfo',
-        headers={'Authorization': f"Bearer {response.json().get('access_token')}"}
+        headers={'Authorization': f'Bearer {access_token}'}
     )
     return user_info.json()
