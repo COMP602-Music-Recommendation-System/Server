@@ -24,7 +24,9 @@ def login_apple():
         'https://appleid.apple.com/auth/authorize?'
         f'client_id={APPLE_CLIENT_ID}&'
         f'redirect_uri={APPLE_REDIRECT_URI}&'
-        f'scope=name%20email&response_type=code&response_mode=form_post'
+        'scope=name email&'
+        'response_type=code&'
+        'response_mode=form_post'
     )
 
 

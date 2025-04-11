@@ -17,10 +17,12 @@ GOOGLE_REDIRECT_URI = os.getenv('GOOGLE_REDIRECT_URI')
 @google.get('/login')
 async def login_google():
     return RedirectResponse(
-        'https://accounts.google.com/o/oauth2/auth?response_type=code&'
+        'https://accounts.google.com/o/oauth2/auth?'
         f'client_id={GOOGLE_CLIENT_ID}&'
         f'redirect_uri={GOOGLE_REDIRECT_URI}&'
-        'scope=openid%20profile%20email&access_type=offline'
+        'response_type=code&'
+        'scope=openid profile email&'
+        'access_type=offline'
     )
 
 
