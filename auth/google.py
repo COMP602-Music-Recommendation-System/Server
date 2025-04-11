@@ -43,4 +43,5 @@ async def auth_google(code: str):
         'https://www.googleapis.com/oauth2/v1/userinfo',
         headers={'Authorization': f'Bearer {access_token}'}
     )
+    # id is Google’s unique identifier
     return user_info.json()
