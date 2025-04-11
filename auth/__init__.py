@@ -10,6 +10,18 @@ auth = APIRouter(
     prefix='/auth'
 )
 
+
+@auth.get('/method')
+async def get_auth():
+    # This order will be the same order on site/app login page
+    return [
+        'google',
+        'github',
+        'spotify',
+        'apple',
+    ]
+
+
 auth.include_router(google)
 auth.include_router(apple)
 auth.include_router(spotify)
