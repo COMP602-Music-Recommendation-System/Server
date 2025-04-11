@@ -42,7 +42,6 @@ async def callback(code: str):
     if not access_token:
         raise HTTPException(detail='Failed to retrieve access token', status_code=400)
 
-    # Get user profile
     user_info = get(
         f'https://api.spotify.com/v1/me',
         headers={'Authorization': f'Bearer {access_token}'}
