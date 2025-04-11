@@ -1,5 +1,6 @@
 python-multipart
 python-jose
+SQLAlchemy
 fastapi
 uvicorn
 httpx
