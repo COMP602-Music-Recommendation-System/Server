@@ -1,12 +1,11 @@
 import os
 
 from fastapi.responses import RedirectResponse
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter
 from httpx import post, get
-import jwt
 
 google = APIRouter(
-    tags=['auth','google'],
+    tags=['auth', 'google'],
     prefix='/google'
 )
 
