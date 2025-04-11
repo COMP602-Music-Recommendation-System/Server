@@ -1,0 +1,3 @@
+[submodule "fastapi_jwt"]
+	path = fastapi_jwt
+	url = git@gitlab.com:rtnztech-lib/fastapi_jwt.git

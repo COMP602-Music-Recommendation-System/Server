@@ -1,6 +1,10 @@
 from time import time
 import os
 
+from database import User
+
+from fastapi_jwt import create_access_token, create_refresh_token
+
 from fastapi import APIRouter, Request, HTTPException
 from fastapi.responses import RedirectResponse
 from httpx import post
@@ -20,14 +24,12 @@ APPLE_KEY_ID = os.getenv('APPLE_KEY_ID')
 
 @apple.get('/login')
 async def login_apple():
-    return RedirectResponse(
-        'https://appleid.apple.com/auth/authorize?'
-        f'client_id={APPLE_CLIENT_ID}&'
-        f'redirect_uri={APPLE_REDIRECT_URI}&'
-        'scope=name email&'
-        'response_type=code&'
-        'response_mode=form_post'
-    )
+    return 'https://appleid.apple.com/auth/authorize?' \
+           f'client_id={APPLE_CLIENT_ID}&' \
+           f'redirect_uri={APPLE_REDIRECT_URI}&' \
+           'scope=name email&' \
+           'response_type=code&' \
+           'response_mode=form_post'
 
 
 @apple.post('/')
@@ -38,7 +40,7 @@ async def auth_apple(request: Request):
     with open(APPLE_PRIVATE_KEY_PATH, 'r') as file:
         private_key = file.read()
 
-    response = post('https://appleid.apple.com/auth/token', data={
+    token_response = post('https://appleid.apple.com/auth/token', data={
         'client_id': APPLE_CLIENT_ID,
         'code': code,
         'grant_type': 'authorization_code',
@@ -59,10 +61,15 @@ async def auth_apple(request: Request):
         )
     })
 
-    id_token = response.json().get('id_token')
+    id_token = token_response.json().get('id_token')
     if not id_token:
         raise HTTPException(status_code=400, detail='Failed to retrieve ID token')
 
     user_info = jwt.decode(id_token, options={'verify_signature': False})
     # sub is Apple’s unique identifier
-    return user_info
+    user = User.get_by('apple_id', user_info['sub'])
+    response = RedirectResponse(os.getenv('LOGIN_FINAL_ENDPOINT'))
+    response.set_cookie('access_token', create_access_token(user.id), httponly=True, secure=True)
+    response.set_cookie('refresh_token', create_refresh_token(user.id), httponly=True, secure=True)
+    return response
+

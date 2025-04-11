@@ -1,5 +1,9 @@
 import os
 
+from database import User
+
+from fastapi_jwt import create_access_token, create_refresh_token
+
 from fastapi.responses import RedirectResponse
 from fastapi import APIRouter, HTTPException
 from httpx import get, post
@@ -16,18 +20,15 @@ GITHUB_REDIRECT_URI = os.getenv('GITHUB_REDIRECT_URI')
 
 @github.get('/login')
 async def login_github():
-    github_authorize_url = (
-        'https://github.com/login/oauth/authorize?'
-        f'client_id={GITHUB_CLIENT_ID}&'
-        f'redirect_uri={GITHUB_REDIRECT_URI}&'
-        'scope=read:user'
-    )
-    return RedirectResponse(github_authorize_url)
+    return 'https://github.com/login/oauth/authorize?' \
+           f'client_id={GITHUB_CLIENT_ID}&' \
+           f'redirect_uri={GITHUB_REDIRECT_URI}&' \
+           'scope=read:user'
 
 
 @github.get('/')
 async def auth_github(code: str):
-    response = post(
+    token_response = post(
         'https://github.com/login/oauth/access_token',
         headers={'Accept': 'application/json'},
         data={
@@ -37,7 +38,7 @@ async def auth_github(code: str):
             'redirect_uri': GITHUB_REDIRECT_URI,
         },
     )
-    access_token = response.json().get('access_token')
+    access_token = token_response.json().get('access_token')
     if not access_token:
         raise HTTPException(detail='Failed to retrieve access token', status_code=400)
 
@@ -46,4 +47,8 @@ async def auth_github(code: str):
         headers={'Authorization': f'token {access_token}'}
     )
     # id is GitHub’s unique identifier
-    return user_info.json()
+    user = User.get_by('github_id', user_info.json()['id'])
+    response = RedirectResponse(os.getenv('LOGIN_FINAL_ENDPOINT'))
+    response.set_cookie('access_token', create_access_token(user.id), httponly=True, secure=True)
+    response.set_cookie('refresh_token', create_refresh_token(user.id), httponly=True, secure=True)
+    return response
