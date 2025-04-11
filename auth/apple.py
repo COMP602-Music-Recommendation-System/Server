@@ -38,34 +38,31 @@ async def auth_apple(request: Request):
     with open(APPLE_PRIVATE_KEY_PATH, 'r') as file:
         private_key = file.read()
 
-    client_secret = jwt.encode(
-        {
-            'iss': APPLE_TEAM_ID,
-            'iat': int(time()),
-            'exp': int(time()) + 86400 * 180,
-            'aud': 'https://appleid.apple.com',
-            'sub': APPLE_CLIENT_ID,
-        }, private_key,
-        headers={
-            'alg': 'ES256',
-            'kid': APPLE_KEY_ID,
-        },
-        algorithm='ES256'
-    )
-
-    data = {
+    response = post('https://appleid.apple.com/auth/token', data={
         'client_id': APPLE_CLIENT_ID,
-        'client_secret': client_secret,
         'code': code,
         'grant_type': 'authorization_code',
         'redirect_uri': APPLE_REDIRECT_URI,
-    }
-
-    response = post('https://appleid.apple.com/auth/token', data=data)
+        'client_secret': jwt.encode(
+            {
+                'iss': APPLE_TEAM_ID,
+                'iat': int(time()),
+                'exp': int(time()) + 86_400,
+                'aud': 'https://appleid.apple.com',
+                'sub': APPLE_CLIENT_ID,
+            }, private_key,
+            headers={
+                'alg': 'ES256',
+                'kid': APPLE_KEY_ID,
+            },
+            algorithm='ES256'
+        )
+    })
 
     id_token = response.json().get('id_token')
     if not id_token:
         raise HTTPException(status_code=400, detail='Failed to retrieve ID token')
-    decoded_token = jwt.decode(id_token, options={'verify_signature': False})
+
+    user_info = jwt.decode(id_token, options={'verify_signature': False})
     # sub is Apple’s unique identifier
-    return decoded_token
+    return user_info
