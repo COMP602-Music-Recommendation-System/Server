@@ -19,7 +19,7 @@ APPLE_KEY_ID = os.getenv('APPLE_KEY_ID')
 
 
 @apple.get('/login')
-def login_apple():
+async def login_apple():
     return RedirectResponse(
         'https://appleid.apple.com/auth/authorize?'
         f'client_id={APPLE_CLIENT_ID}&'

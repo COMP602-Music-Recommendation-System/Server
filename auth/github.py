@@ -15,7 +15,7 @@ GITHUB_REDIRECT_URI = os.getenv('GITHUB_REDIRECT_URI')
 
 
 @github.get('/login')
-def login_github():
+async def login_github():
     github_authorize_url = (
         'https://github.com/login/oauth/authorize?'
         f'client_id={GITHUB_CLIENT_ID}&'
