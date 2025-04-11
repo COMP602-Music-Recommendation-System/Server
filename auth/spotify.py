@@ -15,7 +15,7 @@ SPOTIFY_CLIENT_SECRET = os.getenv('SPOTIFY_CLIENT_SECRET')
 
 
 @spotify.get('/login')
-def login_spotify():
+async def login_spotify():
     return RedirectResponse(
         'https://accounts.spotify.com/authorize?'
         f'client_id={SPOTIFY_CLIENT_ID}&'
@@ -26,7 +26,7 @@ def login_spotify():
 
 
 @spotify.get('/')
-async def callback(code: str):
+async def auth_spotify(code: str):
     if not code:
         raise HTTPException(status_code=400, detail='No code provided')
 
