@@ -2,3 +2,7 @@
 /.dev.env
 /AuthKey_*.p8
 *.db
+/venv/
+__pycache__/
+/.env
+.env

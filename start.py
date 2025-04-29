@@ -6,7 +6,9 @@ from auth import auth
 
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import *
-
+from dotenv import load_dotenv
+load_dotenv()
+print(os.getenv('LOGIN_BYPASS'))
 app = FastAPI(title='test', docs_url=None)
 JWT(
     app,
