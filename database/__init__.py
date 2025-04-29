@@ -12,6 +12,9 @@ class PlaylistMap(Base):
     __playlist_id = Column('playlist_id', String, nullable=False, primary_key=True)
     __user_id = Column('user_id', String, ForeignKey('User.user_id'), nullable=False)
 
+    __playlist_name = Column('playlist_name', String, nullable=False)
+    __owner = relationship('User')
+
 
 class User(Base):
     __tablename__ = 'User'
@@ -32,6 +35,8 @@ class User(Base):
 
     def __setitem__(self, key, value):
         match key:
+            case 'email':
+                self.__email = value
             case 'apple_id':
                 self.__apple_id = value
             case 'github_id':
@@ -40,6 +45,12 @@ class User(Base):
                 self.__google_id = value
             case 'spotify_id':
                 self.__spotify_id = value
+            case 'username':
+                self.__username = value
+            case 'password':
+                self.__password = value
+            case 'user_id':
+                self.__user_id = value
             case _:
                 raise KeyError
         session.commit()
@@ -50,7 +61,7 @@ class User(Base):
 
     @classmethod
     def get_by(cls, method: str, _id: str):
-        if method not in {'user_id', 'apple_id', 'github_id', 'google_id', 'spotify_id'}:
+        if method not in ('email', 'user_id', 'apple_id', 'github_id', 'google_id', 'spotify_id'):
             raise KeyError
         user = session.query(cls).filter(getattr(cls, f'_{cls.__name__}__{method}') == _id).first()
         if user is None:
@@ -61,6 +72,6 @@ class User(Base):
 
 
 # TODO: Temporary value and file name
-db = create_engine('sqlite:///data.db', echo=False, connect_args={'timeout': 30})
+db = create_engine(f'sqlite:///{os.getenv('DB_PATH')}', echo=False, connect_args={'timeout': 30})
 Base.metadata.create_all(bind=db)
 session = sessionmaker(bind=db)()

@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Server" type="Python.FastAPI">
-    <option name="file" value="$PROJECT_DIR$/main.py" />
+    <option name="file" value="$PROJECT_DIR$/start.py" />
     <module name="server" />
     <option name="ENV_FILES" value="" />
     <option name="INTERPRETER_OPTIONS" value="" />

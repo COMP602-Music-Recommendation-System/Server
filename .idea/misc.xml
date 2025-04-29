@@ -3,5 +3,5 @@
   <component name="Black">
     <option name="sdkName" value="server" />
   </component>
-  <component name="ProjectRootManager" version="2" project-jdk-name="COMP602-Music-Recommendation-System" project-jdk-type="Python SDK" />
+  <component name="ProjectRootManager" version="2" project-jdk-name="Music" project-jdk-type="Python SDK" />
 </project>

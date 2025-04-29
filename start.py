@@ -24,9 +24,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_methods=['*'],
     allow_headers=['*'],
-    allow_origins=[
-        'http://localhost:8100'
-    ]
+    allow_origins=['*']
 )
 
 app.include_router(auth)

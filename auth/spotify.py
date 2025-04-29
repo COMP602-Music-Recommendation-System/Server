@@ -47,9 +47,11 @@ async def auth_spotify(code: str):
     user_info = get(
         f'https://api.spotify.com/v1/me',
         headers={'Authorization': f'Bearer {access_token}'}
-    )
+    ).json()
     # id is Spotify’s unique identifier
-    user = User.get_by('apple_id', user_info.json()['id'])
+    user = User.get_by('spotify_id', user_info.json()['id'])
+    from json import dumps
+    print(dumps(user_info, indent=4))
     response = RedirectResponse(os.getenv('LOGIN_FINAL_ENDPOINT'))
     response.set_cookie('access_token', create_access_token(user.id), httponly=True, secure=True)
     response.set_cookie('refresh_token', create_refresh_token(user.id), httponly=True, secure=True)

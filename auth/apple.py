@@ -68,6 +68,7 @@ async def auth_apple(request: Request):
     user_info = jwt.decode(id_token, options={'verify_signature': False})
     # sub is Apple’s unique identifier
     user = User.get_by('apple_id', user_info['sub'])
+    user['email'] = user_info['email']
     response = RedirectResponse(os.getenv('LOGIN_FINAL_ENDPOINT'))
     response.set_cookie('access_token', create_access_token(user.id), httponly=True, secure=True)
     response.set_cookie('refresh_token', create_refresh_token(user.id), httponly=True, secure=True)
