@@ -12,9 +12,7 @@ class PlaylistMap(Base):
 
     __playlist_id = Column('playlist_id', String, nullable=False, primary_key=True)
     __user_id = Column('user_id', String, ForeignKey('User.user_id'), nullable=False)
-
     __playlist_name = Column('playlist_name', String, nullable=False)
-    __owner = relationship('User')
 
 
 class User(Base):
@@ -61,6 +59,7 @@ class User(Base):
     @property
     def id(self):
         return self.__user_id
+
 
     @classmethod
     def get_by(cls, method: str, _id: str):

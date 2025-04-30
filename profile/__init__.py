@@ -11,4 +11,4 @@ profile = APIRouter(
 @profile.get('/')
 async def get_profile(_auth: auth_jwt = Depends()):
     print(_auth)
-    return
+    return _auth.id
