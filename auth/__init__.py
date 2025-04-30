@@ -11,8 +11,6 @@ from database import User
 from fastapi import APIRouter, Depends, Response
 
 
-
-
 class AuthProvider(StrEnum):
     GOOGLE = 'google'
     APPLE = 'apple'

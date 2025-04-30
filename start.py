@@ -6,6 +6,7 @@ from datetime import timedelta
 import os
 
 from fastapi_jwt import JWT
+from profile import profile
 from auth import auth
 
 from fastapi.middleware.cors import CORSMiddleware
@@ -28,3 +29,4 @@ app.add_middleware(
 )
 
 app.include_router(auth)
+app.include_router(profile)

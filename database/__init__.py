@@ -1,3 +1,4 @@
+import os
 from uuid import uuid4
 
 from sqlalchemy import create_engine, ForeignKey, Column, String, Integer, DateTime, Boolean
@@ -21,6 +22,8 @@ class User(Base):
 
     __user_id = Column('user_id', String, nullable=False, primary_key=True)
     __username = Column('username', String, nullable=True)
+    __avatar = Column('avatar', String, nullable=True)
+
     __email = Column('email', String, nullable=True)
     __password = Column('password', String, nullable=True)
     __apple_id = Column('apple_id', String, nullable=True)
