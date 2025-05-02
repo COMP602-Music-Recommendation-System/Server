@@ -3,7 +3,7 @@ from datetime import timedelta
 
 from fastapi_jwt import JWT
 from auth import auth
-
+from auth.spotify_data import spotify_data_router
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import *
 from dotenv import load_dotenv
@@ -24,7 +24,8 @@ app.add_middleware(
     allow_headers=['*'],
     allow_origins=[
         'http://localhost:8100'
-    ]
+    ],
+    allow_credentials=True 
 )
 
 
@@ -34,3 +35,4 @@ async def base():
 
 
 app.include_router(auth)
+app.include_router(spotify_data_router)

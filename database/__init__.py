@@ -24,6 +24,9 @@ class User(Base):
     __github_id = Column('github_id', String, nullable=True)
     __google_id = Column('google_id', String, nullable=True)
     __spotify_id = Column('spotify_id', String, nullable=True)
+    __spotify_access_token = Column('spotify_access_token', String, nullable=True)
+    __spotify_refresh_token = Column('spotify_refresh_token', String, nullable=True)
+    __spotify_token_expires = Column('spotify_token_expires', DateTime, nullable=True)
 
     playlists = relationship('PlaylistMap')
 
@@ -41,12 +44,24 @@ class User(Base):
             case 'spotify_id':
                 self.__spotify_id = value
             case _:
-                raise KeyError
-        session.commit()
+                raise KeyError(f"Setting '{key}' via dictionary assignment is not supported or key is invalid.")
 
     @property
     def id(self):
         return self.__user_id
+    
+
+    @property
+    def spotify_access_token(self):
+        return self.__spotify_access_token
+
+    @property
+    def spotify_refresh_token(self):
+        return self.__spotify_refresh_token
+
+    @property
+    def spotify_token_expires(self):
+        return self.__spotify_token_expires
 
     @classmethod
     def get_by(cls, method: str, _id: str):
@@ -60,7 +75,7 @@ class User(Base):
         return user
 
 
-# TODO: Temporary value and file name
+
 db = create_engine('sqlite:///data.db', echo=False, connect_args={'timeout': 30})
 Base.metadata.create_all(bind=db)
 session = sessionmaker(bind=db)()
