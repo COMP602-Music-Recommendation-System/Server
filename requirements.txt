@@ -1,8 +1,8 @@
 python-multipart
-python-dotenv
-pyjwt[crypto]
 python-jose
 SQLAlchemy
 fastapi
 uvicorn
 httpx
+pyjwt
+dotenv

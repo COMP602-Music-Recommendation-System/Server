@@ -1,77 +1,58 @@
-from uuid import uuid4
+from enum import StrEnum
 
-from sqlalchemy import create_engine, ForeignKey, Column, String, Integer, DateTime, Boolean
-from sqlalchemy.orm import declarative_base, sessionmaker, relationship, mapped_column
+from fastapi_jwt import create_access_token, AuthJWT
 
-Base = declarative_base()
+from auth.github import github
+from auth.google import google
+from auth.apple import apple
+from auth.spotify import spotify
 
-
-class PlaylistMap(Base):
-    __tablename__ = 'Playlist'
-
-    __playlist_id = Column('playlist_id', String, nullable=False, primary_key=True)
-    __user_id = Column('user_id', String, ForeignKey('User.user_id'), nullable=False)
-
-    __playlist_name = Column('playlist_name', String, nullable=False)
-    __owner = relationship('User')
+from fastapi import APIRouter, Depends, Response
 
 
-class User(Base):
-    __tablename__ = 'User'
-
-    __user_id = Column('user_id', String, nullable=False, primary_key=True)
-    __username = Column('username', String, nullable=True)
-    __email = Column('email', String, nullable=True)
-    __password = Column('password', String, nullable=True)
-    __apple_id = Column('apple_id', String, nullable=True)
-    __github_id = Column('github_id', String, nullable=True)
-    __google_id = Column('google_id', String, nullable=True)
-    __spotify_id = Column('spotify_id', String, nullable=True)
-
-    playlists = relationship('PlaylistMap')
-
-    def __init__(self):
-        self.__user_id = str(uuid4())
-
-    def __setitem__(self, key, value):
-        match key:
-            case 'email':
-                self.__email = value
-            case 'apple_id':
-                self.__apple_id = value
-            case 'github_id':
-                self.__github_id = value
-            case 'google_id':
-                self.__google_id = value
-            case 'spotify_id':
-                self.__spotify_id = value
-            case 'username':
-                self.__username = value
-            case 'password':
-                self.__password = value
-            case 'user_id':
-                self.__user_id = value
-            case _:
-                raise KeyError
-        session.commit()
-
-    @property
-    def id(self):
-        return self.__user_id
-
-    @classmethod
-    def get_by(cls, method: str, _id: str):
-        if method not in ('email', 'user_id', 'apple_id', 'github_id', 'google_id', 'spotify_id'):
-            raise KeyError
-        user = session.query(cls).filter(getattr(cls, f'_{cls.__name__}__{method}') == _id).first()
-        if user is None:
-            user = User()
-            session.add(user)
-            user[method] = _id
-        return user
+class AuthProvider(StrEnum):
+    GOOGLE = 'google'
+    APPLE = 'apple'
+    GITHUB = 'github'
+    SPOTIFY = 'spotify'
 
 
-# TODO: Temporary value and file name
-db = create_engine(f'sqlite:///{os.getenv('DB_PATH')}', echo=False, connect_args={'timeout': 30})
-Base.metadata.create_all(bind=db)
-session = sessionmaker(bind=db)()
+auth = APIRouter(
+    tags=['auth'],
+    prefix='/auth'
+)
+
+
+@auth.get('/method')
+async def get_auth():
+    # This order will be the same order on site/app login page
+    return [
+        'google',
+        'github',
+        'spotify',
+        'apple',
+    ]
+
+
+@auth.get('/refresh')
+async def refresh(response: Response, _auth: AuthJWT(True) = Depends()):
+    response.set_cookie('access_token', create_access_token(auth.identity), httponly=True, secure=True)
+    return {'msg': 'Success'}
+
+
+@auth.get('/logout')
+async def refresh(response: Response):
+    response.delete_cookie('access_token')
+    response.delete_cookie('refresh_token')
+    return {'msg': 'Success'}
+
+
+@auth.get('/verify')
+async def verify(_auth: AuthJWT() = Depends()):
+    return {'msg': 'Success'}
+
+
+auth.include_router(google)
+auth.include_router(apple)
+auth.include_router(spotify)
+auth.include_router(github)
