@@ -44,9 +44,11 @@ async def auth_google(code: str):
     user_info = get(
         'https://www.googleapis.com/oauth2/v1/userinfo',
         headers={'Authorization': f'Bearer {access_token}'}
-    )
+    ).json()
     # id is Google’s unique identifier
-    user = User.get_by('google_id', user_info.json()['id'])
+    user = User.get_by('google_id', user_info['id'])
+    user['username'] = user_info['name']
+    user['email'] = user_info['email']
     response = RedirectResponse(os.getenv('LOGIN_FINAL_ENDPOINT'))
     response.set_cookie('access_token', create_access_token(user.id), httponly=True, secure=True)
     response.set_cookie('refresh_token', create_refresh_token(user.id), httponly=True, secure=True)

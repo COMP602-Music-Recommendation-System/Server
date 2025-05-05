@@ -45,9 +45,10 @@ async def auth_github(code: str):
     user_info = get(
         'https://api.github.com/user',
         headers={'Authorization': f'token {access_token}'}
-    )
+    ).json()
     # id is GitHub’s unique identifier
-    user = User.get_by('github_id', user_info.json()['id'])
+    user = User.get_by('github_id', user_info['id'])
+    user['username'] = user_info['login']
     response = RedirectResponse(os.getenv('LOGIN_FINAL_ENDPOINT'))
     response.set_cookie('access_token', create_access_token(user.id), httponly=True, secure=True)
     response.set_cookie('refresh_token', create_refresh_token(user.id), httponly=True, secure=True)
