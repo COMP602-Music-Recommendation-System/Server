@@ -1,38 +1,20 @@
+import uvicorn
 import os
-from datetime import timedelta
+import sys
+from pathlib import Path
 
-from fastapi_jwt import JWT
-from auth import auth
-from auth.spotify_data import spotify_data_router
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi import *
-from dotenv import load_dotenv
-load_dotenv()
-print(os.getenv('LOGIN_BYPASS'))
-app = FastAPI(title='test', docs_url=None)
-JWT(
-    app,
-    '07E38D73B7DF0C511753B2E6229BAE701EC6E2273FDEC78F658EDB87C81B83A3'
-    '766C8BC0EA276121099BF3F609E26536EFCFD4B37FA261C5ECE1D9F2B7976DC7',
-    timedelta(hours=1),
-    timedelta(days=1),
-    os.getenv('LOGIN_BYPASS')=='true'
-)
-app.add_middleware(
-    CORSMiddleware,
-    allow_methods=['*'],
-    allow_headers=['*'],
-    allow_origins=[
-        'http://localhost:8100'
-    ],
-    allow_credentials=True 
-)
+# Add the parent directory to sys.path
+sys.path.append(str(Path(__file__).parent.parent))
 
+if __name__ == "__main__":
+    # Get port from environment variable or use default
+    port = int(os.getenv("PORT", 8000))
 
-@app.get('/')
-async def base():
-    return 'test create'
-
-
-app.include_router(auth)
-app.include_router(spotify_data_router)
+    # Run the application
+    uvicorn.run(
+        "app.main:app",
+        host="0.0.0.0",
+        port=port,
+        reload=True,
+        log_level="info"
+    )

@@ -1,16 +1,19 @@
 from enum import StrEnum
 
 from fastapi_jwt import create_access_token, AuthJWT
-from fastapi_jwt.jwt import Payload
-from auth.spotify import spotify
-from database import User
+
+from app.auth.github import github
+from app.auth.google import google
+from app.auth.apple import apple
+from app.auth.spotify import spotify
 
 from fastapi import APIRouter, Depends, Response
 
 
-
-
 class AuthProvider(StrEnum):
+    GOOGLE = 'google'
+    APPLE = 'apple'
+    GITHUB = 'github'
     SPOTIFY = 'spotify'
 
 
@@ -24,7 +27,10 @@ auth = APIRouter(
 async def get_auth():
     # This order will be the same order on site/app login page
     return [
+        'google',
+        'github',
         'spotify',
+        'apple',
     ]
 
 
@@ -46,10 +52,7 @@ async def verify(_auth: AuthJWT() = Depends()):
     return {'msg': 'Success'}
 
 
-def get_user(payload: Payload):
-    return User.get_by('user_id', payload.identity)
-
-
-auth_jwt = AuthJWT()
-
+auth.include_router(google)
+auth.include_router(apple)
 auth.include_router(spotify)
+auth.include_router(github)
