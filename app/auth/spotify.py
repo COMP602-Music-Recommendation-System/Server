@@ -1,6 +1,6 @@
 import os
 
-from database import User
+from app.db.models import User
 
 from fastapi_jwt import create_access_token, create_refresh_token
 

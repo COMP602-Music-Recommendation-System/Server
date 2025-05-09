@@ -2,10 +2,10 @@ from enum import StrEnum
 
 from fastapi_jwt import create_access_token, AuthJWT
 
-from auth.github import github
-from auth.google import google
-from auth.apple import apple
-from auth.spotify import spotify
+from app.auth.github import github
+from app.auth.google import google
+from app.auth.apple import apple
+from app.auth.spotify import spotify
 
 from fastapi import APIRouter, Depends, Response
 
