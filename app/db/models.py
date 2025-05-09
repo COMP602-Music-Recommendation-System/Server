@@ -3,7 +3,7 @@ from datetime import datetime
 from typing import Optional
 
 from sqlalchemy import Boolean, Column, DateTime, Integer, String
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, ConfigDict
 from sqlalchemy.sql import func
 
 from app.db.session import Base
@@ -31,9 +31,10 @@ class User(UserBase):
     id: int
     is_active: bool
     created_at: datetime
+    model_config = ConfigDict(from_attributes=True)
 
-    class Config:
-        orm_mode = True
+    #class Config:
+      #  orm_mode = True
 
 class Token(BaseModel):
     access_token: str
