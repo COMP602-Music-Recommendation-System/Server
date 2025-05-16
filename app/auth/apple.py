@@ -1,9 +1,9 @@
 from time import time
 import os
 
-from app.db.models import User
-
-from fastapi_jwt import create_access_token, create_refresh_token
+from app.models import User
+from app.auth.utils import create_access_token, create_refresh_token
+from app.auth.utils import create_access_token
 
 from fastapi import APIRouter, Request, HTTPException
 from fastapi.responses import RedirectResponse

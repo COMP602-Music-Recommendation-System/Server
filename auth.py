@@ -2,12 +2,11 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from passlib.context import CryptContext
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, UTC
 from typing import Optional
 from sqlalchemy.orm import Session
 
-from . import database
-from app.db import models
+from app import database, models
 
 # Constants for JWT
 SECRET_KEY = "YOUR_SECRET_KEY_HERE"  # In production, use a secure key and store it properly
@@ -25,8 +24,7 @@ def get_password_hash(password):
     return pwd_context.hash(password)
 
 def get_user(db: Session, username: str):
-    # Implement database query to get user by username
-    # This is a placeholder - implement according to your database structure
+    # Fixed: Use == operator within the SQLAlchemy ORM context
     return db.query(models.User).filter(models.User.username == username).first()
 
 def authenticate_user(db: Session, username: str, password: str):
@@ -40,9 +38,9 @@ def authenticate_user(db: Session, username: str, password: str):
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     to_encode = data.copy()
     if expires_delta:
-        expire = datetime.utcnow() + expires_delta
+        expire = datetime.now(UTC) + expires_delta
     else:
-        expire = datetime.utcnow() + timedelta(minutes=15)
+        expire = datetime.now(UTC) + timedelta(minutes=15)
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt

@@ -1,5 +1,4 @@
-from app.db.session import engine, Base
-from app.db.models import UserModel
+from app.session import engine
 from sqlalchemy import text
 import sqlite3
 

@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from typing import List
-from database import get_db
-from app.db.models import ListeningHistory, UserPreferences, User
-from schemas import HistoryCreate, HistoryResponse, PreferenceUpdate, PreferenceResponse
+from app.database import get_db
+from app.models import ListeningHistory, UserPreferences, User
+from app.schemas import HistoryCreate, HistoryResponse, PreferenceUpdate, PreferenceResponse
 from auth import get_current_user
 
 router = APIRouter(

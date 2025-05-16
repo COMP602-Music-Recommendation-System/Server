@@ -1,9 +1,8 @@
 import os
 
-from app.db.models import User
+from app.models import User
 
-from fastapi_jwt import create_access_token, create_refresh_token
-
+from app.auth.utils import create_access_token, create_refresh_token
 from fastapi.responses import RedirectResponse
 from fastapi import APIRouter, HTTPException
 from httpx import get, post
@@ -49,7 +48,7 @@ async def auth_spotify(code: str):
         headers={'Authorization': f'Bearer {access_token}'}
     )
     # id is Spotify’s unique identifier
-    user = User.get_by('apple_id', user_info.json()['id'])
+    user = User.get_by('spotify_id', user_info.json()['id'])
     response = RedirectResponse(os.getenv('LOGIN_FINAL_ENDPOINT'))
     response.set_cookie('access_token', create_access_token(user.id), httponly=True, secure=True)
     response.set_cookie('refresh_token', create_refresh_token(user.id), httponly=True, secure=True)

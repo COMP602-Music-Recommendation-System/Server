@@ -1,10 +1,7 @@
 import os
 
-from app.db.models import User
+from app.models import User
 
-from fastapi_jwt import create_access_token, create_refresh_token
-
-from fastapi.responses import RedirectResponse
 from fastapi import APIRouter, HTTPException
 from httpx import get, post
 

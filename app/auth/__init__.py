@@ -1,13 +1,12 @@
 from enum import StrEnum
 
-from fastapi_jwt import create_access_token, AuthJWT
-
 from app.auth.github import github
 from app.auth.google import google
 from app.auth.apple import apple
 from app.auth.spotify import spotify
 
 from fastapi import APIRouter, Depends, Response
+from app.auth.utils import create_access_token, create_refresh_token, get_current_user
 
 
 class AuthProvider(StrEnum):
@@ -35,21 +34,24 @@ async def get_auth():
 
 
 @auth.get('/refresh')
-async def refresh(response: Response, _auth: AuthJWT(True) = Depends()):
-    response.set_cookie('access_token', create_access_token(auth.identity), httponly=True, secure=True)
+async def refresh(response: Response, current_user = Depends(get_current_user)):
+    # Create a new access token
+    access_token = create_access_token(data={"sub": current_user.username})
+    response.set_cookie('access_token', access_token, httponly=True, secure=True)
     return {'msg': 'Success'}
 
 
 @auth.get('/logout')
-async def refresh(response: Response):
+async def logout(response: Response):
     response.delete_cookie('access_token')
     response.delete_cookie('refresh_token')
     return {'msg': 'Success'}
 
 
 @auth.get('/verify')
-async def verify(_auth: AuthJWT() = Depends()):
-    return {'msg': 'Success'}
+async def verify(current_user = Depends(get_current_user)):
+    # If we get here, the user is authenticated
+    return {'msg': 'Success', 'user': current_user.username}
 
 
 auth.include_router(google)
