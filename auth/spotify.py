@@ -6,10 +6,7 @@ from fastapi import APIRouter, HTTPException
 from fastapi.responses import RedirectResponse
 from fastapi_jwt import create_access_token, create_refresh_token
 
-try:
-    from database import User, session
-except ImportError:
-    raise ImportError("Could not import User or session from database module. Please ensure it's correctly set up.")
+from database import User, session
 
 from dotenv import load_dotenv
 

@@ -53,7 +53,7 @@ def get_user(payload: Payload):
     return User.get_by('user_id', payload.identity)
 
 
-auth_jwt = AuthJWT(func=get_user)
+auth_jwt = AuthJWT()
 
 
 auth.include_router(spotify)
