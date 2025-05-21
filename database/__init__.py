@@ -19,10 +19,6 @@ class User(Base):
     __user_id = Column('user_id', String, nullable=False, primary_key=True)
     __username = Column('username', String, nullable=True)
     __email = Column('email', String, nullable=True)
-    __password = Column('password', String, nullable=True)
-    __apple_id = Column('apple_id', String, nullable=True)
-    __github_id = Column('github_id', String, nullable=True)
-    __google_id = Column('google_id', String, nullable=True)
     __spotify_id = Column('spotify_id', String, nullable=True)
     __spotify_access_token = Column('spotify_access_token', String, nullable=True)
     __spotify_refresh_token = Column('spotify_refresh_token', String, nullable=True)
@@ -35,12 +31,6 @@ class User(Base):
 
     def __setitem__(self, key, value):
         match key:
-            case 'apple_id':
-                self.__apple_id = value
-            case 'github_id':
-                self.__github_id = value
-            case 'google_id':
-                self.__google_id = value
             case 'spotify_id':
                 self.__spotify_id = value
             case _:
@@ -65,7 +55,7 @@ class User(Base):
 
     @classmethod
     def get_by(cls, method: str, _id: str):
-        if method not in {'user_id', 'apple_id', 'github_id', 'google_id', 'spotify_id'}:
+        if method not in {'user_id', 'spotify_id'}:
             raise KeyError
         user = session.query(cls).filter(getattr(cls, f'_{cls.__name__}__{method}') == _id).first()
         if user is None:
