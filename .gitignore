@@ -3,6 +3,6 @@
 /AuthKey_*.p8
 *.db
 /venv/
-__pycache__/
+__pycache__
 /.env
 .env
