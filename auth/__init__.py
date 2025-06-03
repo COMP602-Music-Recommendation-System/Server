@@ -28,9 +28,9 @@ auth = APIRouter(
 async def get_auth():
     # This order will be the same order on site/app login page
     return [
+        'spotify',
         'google',
         'github',
-        'spotify',
         'apple',
     ]
 

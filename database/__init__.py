@@ -60,6 +60,10 @@ class User(Base):
     def id(self):
         return self.__user_id
 
+    @property
+    def avatar(self):
+        return self.__avatar
+
 
     @classmethod
     def get_by(cls, method: str, _id: str):
