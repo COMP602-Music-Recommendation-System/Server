@@ -7,7 +7,7 @@ APP_NAME = "COMP602musicrecommendation"
 APP_VERSION = "0.0.1"
 CONTACT_INFO = "whollings077@gmail.com"
 
-MUSICBRAINZ_API_BASE_URL = os.getenv('MUSICBRAINZ_API_URL', "http://10.10.10.121:5000/ws/2/")
+MUSICBRAINZ_API_BASE_URL = os.getenv('MUSICBRAINZ_API_URL', "https://musicbrainz.org/ws/2/")
 LAST_REQUEST_TIME = 0
 if "musicbrainz.org" in MUSICBRAINZ_API_BASE_URL.lower():
     REQUEST_INTERVAL = 1.1 
